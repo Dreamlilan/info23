@@ -1,5 +1,7 @@
 from info import redis_store
 from . import index_blue
+from flask import render_template
+
 
 @index_blue.route('/')
 def index():
@@ -14,4 +16,4 @@ def index():
     # 输入记录信息
     # logging.debug('调试信息1')
 
-    return 'hello world'
+    return render_template('news/index.html')
