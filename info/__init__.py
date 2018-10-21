@@ -12,7 +12,7 @@ from config import Config,config_dict
 redis_store = None
 
 # 定义db
-db=None
+db=SQLAlchemy()
 
 
 def create_app(config_name):
