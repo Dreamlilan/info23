@@ -8,9 +8,14 @@ from flask_session import Session
 from flask_wtf import CSRFProtect
 from config import Config,config_dict
 
+# 定义redis_store
+redis_store = None
+
+# 定义db
+db=None
+
 
 def create_app(config_name):
-
 
     app = Flask(__name__)
 
@@ -24,9 +29,11 @@ def create_app(config_name):
     app.config.from_object(config)
 
     # 创建SQLAlchemy对象，关联app
-    db = SQLAlchemy(app)
+    db = SQLAlchemy()
+    db.init_app(app)
 
     # 创建redis对象，关联app
+    global redis_store
     redis_store = redis.StrictRedis(host=config.REDIS_HOST,port=config.REDIS_PORT,decode_responses=True)
 
     # 初始化Session，读取app身上的session配置信息
@@ -34,6 +41,10 @@ def create_app(config_name):
 
     # 使用CSRFProtect，保护app
     CSRFProtect(app)
+
+    # 将首页蓝图注册到app中
+    from info.modules.index import index_blue
+    app.register_blueprint(index_blue)
 
     return app
 

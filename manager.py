@@ -11,24 +11,24 @@
 import logging
 from flask import Flask,session
 from info import create_app
+from flask_script import Manager
+from flask_migrate import Migrate,MigrateCommand
 
 app = create_app('development')
 
+# 创建manage对象,管理app
+manager = Manager(app)
 
-@app.route('/',methods=['GET','post'])
-def index():
-    # 测试redis存储数据
-    # redis_store.set('name','lilan')
-    # print(redis_store.get('name'))
+# 关联app,使用Migrate
+Migrate(app)
 
-    # 测试session存储信息
-    # session['age'] = '13'
-    # print(session.get('age'))
+# 给manager添加操作命令
+manager.add_command('db',MigrateCommand)
 
-    # 输入记录信息
-    logging.debug('调试信息1')
 
-    return 'hello world'
+
+
+
 
 if __name__ == '__main__':
     app.run()
