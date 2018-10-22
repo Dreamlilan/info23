@@ -13,7 +13,7 @@ tinymce.init({
             'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
             'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
             'save table contextmenu directionality template paste textcolor',
-            'codesample imageupload',
+            'codesample',
     ],
     //工具栏的补丁按钮
      toolbar: 'insertfile undo redo | \
@@ -30,5 +30,5 @@ tinymce.init({
     fontsize_formats: '10pt 12pt 14pt 18pt 24pt 36pt',
     //按tab不换行
     nonbreaking_force_tab: true,
-    imageupload_url: "/user/submit-image"
+    // imageupload_url: "/user/submit-image"
 });
