@@ -7,6 +7,7 @@ import redis
 from flask_session import Session
 from flask_wtf import CSRFProtect
 from config import Config,config_dict
+from flask_wtf.csrf import generate_csrf
 
 # 定义redis_store
 redis_store = None
@@ -40,7 +41,7 @@ def create_app(config_name):
     Session(app)
 
     # 使用CSRFProtect，保护app
-    # CSRFProtect(app)
+    CSRFProtect(app)
 
     # 将首页蓝图注册到app中
     from info.modules.index import index_blue
@@ -49,6 +50,15 @@ def create_app(config_name):
     # 将认证蓝图注册到app中
     from info.modules.passport import passport_blue
     app.register_blueprint(passport_blue)
+
+    # 使用请求钩子after_request，对所有的响应进行拦截,做统一的csrf_token的设置
+    @app.after_request
+    def after_request(resp):
+        value = generate_csrf()
+        resp.set_cookie('csrf_token',value)
+        return resp
+
+    print(app.url_map)
 
     return app
 

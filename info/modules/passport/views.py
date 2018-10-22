@@ -1,3 +1,4 @@
+from datetime import datetime
 import random
 import re
 
@@ -116,15 +117,16 @@ def sms_code():
         return jsonify(errno=RET.DATAERR, errmsg='图片验证码填写错误')
     # 8.生成短信验证码
     sms_code = '%06d' % random.randint(0, 999999)
+    current_app.logger.debug('短信验证码：%s' % sms_code)
     # 9.发送短信验证码,调用ccp方法
-    ccp = CCP()
-    try:
-        result = ccp.send_template_sms(mobile, [sms_code, constants.SMS_CODE_REDIS_EXPIRES / 60], 1)
-    except Exception as e:
-        current_app.logger.error(e)
-        return jsonify(errno=RET.THIRDERR, errmsg="云通讯发送异常")
-    if result == -1:
-        return jsonify(errno=RET.DATAERR, errmsg='短信发送失败')
+    # ccp = CCP()
+    # try:
+    #     result = ccp.send_template_sms(mobile, [sms_code, constants.SMS_CODE_REDIS_EXPIRES / 60], 1)
+    # except Exception as e:
+    #     current_app.logger.error(e)
+    #     return jsonify(errno=RET.THIRDERR, errmsg="云通讯发送异常")
+    # if result == -1:
+    #     return jsonify(errno=RET.DATAERR, errmsg='短信发送失败')
     # 10.存储短信验证码到redis中
     try:
         redis_store.set('sms_code:%s'% mobile, sms_code, constants.SMS_CODE_REDIS_EXPIRES)
@@ -243,6 +245,10 @@ def login():
     session['user_id'] = user.id
     session['nick_name'] = user.nick_name
     session['mobile'] = user.mobile
+
+    # 6.1 优化功能:记录用户最后一次的登录时间
+    user.last_login = datetime.now()
+
     # 7.返回响应
     return jsonify(errno=RET.OK,errmsg='登录成功')
 
