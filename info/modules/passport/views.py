@@ -189,8 +189,8 @@ def register():
     # 8.创建用户对象,设置属性
     user = User()
     user.nick_name = mobile
-    user.password_hash = password
     user.mobile = mobile
+    user.password = password  # 这个地方的password是一个方法/函数
 
     # 9.保存用户到数据库mysql
     try:
@@ -238,8 +238,9 @@ def login():
     # 4.判断该用户是否存在
     if not user:
         return jsonify(errno=RET.NODATA,errmsg="用户不存在")
-    # 5.校验用户密码是否正确
-    if user.password_hash != password:
+    # 5.校验用户密码是否正确(此处进行了密码加密处理，在登录的时候)
+    # if user.password_hash != password:
+    if not user.check_password(password):
         return jsonify(errno=RET.DATAERR,errmsg='密码错误')
     # 6.保存用户的登陆状态到session
     session['user_id'] = user.id

@@ -191,6 +191,7 @@ $(function(){
             success: function (resp) {
                 //判断是否注册成功
                 if(resp.errno == '0'){
+                    alert(resp.errmsg)
                     //重新加载当前页面
                     window.location.reload()
                 }else{
