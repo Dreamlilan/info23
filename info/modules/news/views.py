@@ -18,7 +18,6 @@ from . import news_blue
 @news_blue.route('/<int:news_id>')
 @user_login_data
 def news_detail(news_id):
-
     # 1.根据传入的新闻编号,获取新闻对象
     try:
         news = News.query.get(news_id)
@@ -38,8 +37,8 @@ def news_detail(news_id):
 
     # 将新闻列表转成,字典列表
     click_news_list = []
-    for news in news_list:
-        click_news_list.append(news.to_dict())
+    for click_news in news_list:
+        click_news_list.append(click_news.to_dict())
 
     # 从session获取用户的编号
     # user_id = session.get('user_id')
@@ -51,11 +50,17 @@ def news_detail(news_id):
     #     except Exception as e:
     #         current_app.logger.error(e)
 
+    # 查询当前用户是否有收藏过该新闻
+    is_collected = False
+    if g.user and news in g.user.collection_news:
+        is_collected = True
+
     # 3.携带数据渲染页面
     data = {
-        'news':news.to_dict(),
-        'click_news_list':click_news_list,
-        'user_info': g.user.to_dict() if g.user else ''
+        'news': news.to_dict(),
+        'click_news_list': click_news_list,
+        'user_info': g.user.to_dict() if g.user else '',
+        'is_collected': is_collected
     }
 
-    return render_template('news/detail.html',data=data)
+    return render_template('news/detail.html', data=data)
